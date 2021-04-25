@@ -9,7 +9,7 @@ import (
 )
 
 func runReceive(cmd *cobra.Command, args []string) {
-	keys := args
+	routes := args
 	var amqpUrl string
 	if username != "" && password != "" {
 		amqpUrl = fmt.Sprintf("%s://%s:%s@%s:%d/", scheme, username, password, host, port)
@@ -53,11 +53,11 @@ func runReceive(cmd *cobra.Command, args []string) {
 		log.Fatalf("Failed to declare a queue: %s", err)
 	}
 
-	for _, s := range keys {
-		log.Printf("Binding queue %s to exchange %s with routing key %s", q.Name, "logs_topic", s)
+	for _, route := range routes {
+		log.Printf("Binding queue %s to exchange %s with routing key %s", q.Name, "logs_topic", route)
 		err = ch.QueueBind(
 			q.Name,       // queue name
-			s,            // routing key
+			route,        // routing key
 			"logs_topic", // exchange
 			false,
 			nil)
