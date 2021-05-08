@@ -8,6 +8,18 @@ import (
 	"github.com/streadway/amqp"
 )
 
+// receive cli command settings
+var receiveCmd = &cobra.Command{
+	Use:   "receive [binding key]...",
+	Short: "Receive RabbitMQ message",
+	Args:  cobra.MinimumNArgs(1),
+	Run:   runReceive,
+}
+
+func init() {
+	rootCmd.AddCommand(receiveCmd)
+}
+
 func runReceive(cmd *cobra.Command, args []string) {
 	routes := args
 	var amqpUrl string

@@ -8,6 +8,18 @@ import (
 	"github.com/streadway/amqp"
 )
 
+// send cli command settings
+var sendCmd = &cobra.Command{
+	Use:   "send [message]",
+	Short: "Send RabbitMQ message",
+	Args:  cobra.ExactArgs(1),
+	Run:   runSend,
+}
+
+func init() {
+	rootCmd.AddCommand(sendCmd)
+}
+
 func runSend(cmd *cobra.Command, args []string) {
 	body := args[0]
 	var amqpUrl string
