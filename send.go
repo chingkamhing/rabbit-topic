@@ -8,6 +8,14 @@ import (
 	"github.com/streadway/amqp"
 )
 
+// send cli command settings
+var sendCmd = &cobra.Command{
+	Use:   "send [message]",
+	Short: "Send RabbitMQ message",
+	Args:  cobra.ExactArgs(1),
+	Run:   runSend,
+}
+
 func runSend(cmd *cobra.Command, args []string) {
 	body := args[0]
 	var amqpUrl string
@@ -29,23 +37,23 @@ func runSend(cmd *cobra.Command, args []string) {
 	defer ch.Close()
 
 	err = ch.ExchangeDeclare(
-		"logs_topic", // name
-		"topic",      // type
-		true,         // durable
-		false,        // auto-deleted
-		false,        // internal
-		false,        // no-wait
-		nil,          // arguments
+		exchange, // name
+		"topic",  // type
+		true,     // durable
+		false,    // auto-deleted
+		false,    // internal
+		false,    // no-wait
+		nil,      // arguments
 	)
 	if err != nil {
 		log.Fatalf("Failed to declare an exchange: %s", err)
 	}
 
 	err = ch.Publish(
-		"logs_topic", // exchange
-		route,        // routing key
-		false,        // mandatory
-		false,        // immediate
+		exchange, // exchange
+		route,    // routing key
+		false,    // mandatory
+		false,    // immediate
 		amqp.Publishing{
 			ContentType: "text/plain",
 			Body:        []byte(body),

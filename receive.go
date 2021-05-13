@@ -8,6 +8,14 @@ import (
 	"github.com/streadway/amqp"
 )
 
+// receive cli command settings
+var receiveCmd = &cobra.Command{
+	Use:   "receive [binding key]...",
+	Short: "Receive RabbitMQ message",
+	Args:  cobra.MinimumNArgs(1),
+	Run:   runReceive,
+}
+
 func runReceive(cmd *cobra.Command, args []string) {
 	routes := args
 	var amqpUrl string
@@ -29,13 +37,13 @@ func runReceive(cmd *cobra.Command, args []string) {
 	defer ch.Close()
 
 	err = ch.ExchangeDeclare(
-		"logs_topic", // name
-		"topic",      // type
-		true,         // durable
-		false,        // auto-deleted
-		false,        // internal
-		false,        // no-wait
-		nil,          // arguments
+		exchange, // name
+		"topic",  // type
+		true,     // durable
+		false,    // auto-deleted
+		false,    // internal
+		false,    // no-wait
+		nil,      // arguments
 	)
 	if err != nil {
 		log.Fatalf("Failed to declare an exchange: %s", err)
@@ -54,11 +62,11 @@ func runReceive(cmd *cobra.Command, args []string) {
 	}
 
 	for _, route := range routes {
-		log.Printf("Binding queue %s to exchange %s with routing key %s", q.Name, "logs_topic", route)
+		log.Printf("Binding queue %s to exchange %s with routing key %s", q.Name, exchange, route)
 		err = ch.QueueBind(
-			q.Name,       // queue name
-			route,        // routing key
-			"logs_topic", // exchange
+			q.Name,   // queue name
+			route,    // routing key
+			exchange, // exchange
 			false,
 			nil)
 		if err != nil {
