@@ -66,7 +66,7 @@ func runReceive(cmd *cobra.Command, args []string) {
 	}
 
 	for _, route := range routes {
-		log.Printf("Binding queue %s to exchange %s with routing key %s", q.Name, exchange, route)
+		log.Printf("Binding queue %s to exchange %s with routing key %q", q.Name, exchange, route)
 		err = ch.QueueBind(
 			q.Name,   // queue name
 			route,    // routing key
@@ -95,7 +95,7 @@ func runReceive(cmd *cobra.Command, args []string) {
 
 	go func() {
 		for d := range msgs {
-			log.Printf("%s", d.Body)
+			log.Printf("%s: %s", d.RoutingKey, d.Body)
 		}
 	}()
 
