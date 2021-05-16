@@ -28,7 +28,10 @@ func runSend(cmd *cobra.Command, args []string) {
 	} else {
 		amqpUrl = fmt.Sprintf("%s://%s:%d/", scheme, host, port)
 	}
-	conn, err := amqp.Dial(amqpUrl)
+	config := amqp.Config{
+		Vhost: vhost,
+	}
+	conn, err := amqp.DialConfig(amqpUrl, config)
 	if err != nil {
 		log.Fatalf("Failed to connect to RabbitMQ: %s", err)
 	}

@@ -4,6 +4,9 @@ RUN rabbitmq-plugins enable --offline rabbitmq_mqtt
 RUN rabbitmq-plugins enable --offline rabbitmq_auth_backend_http
 RUN rabbitmq-plugins enable --offline rabbitmq_auth_backend_cache
 
+ADD init.sh /init.sh
+RUN chmod +x /init.sh
+
 # COPY ./rabbitmq.conf /etc/rabbitmq/
 
 #rabbitmq-amqp
