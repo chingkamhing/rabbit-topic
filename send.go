@@ -43,18 +43,20 @@ func runSend(cmd *cobra.Command, args []string) {
 	}
 	defer ch.Close()
 
-	err = ch.ExchangeDeclare(
-		exchange, // name
-		"topic",  // type
-		true,     // durable
-		false,    // auto-deleted
-		false,    // internal
-		false,    // no-wait
-		nil,      // arguments
-	)
-	if err != nil {
-		log.Fatalf("Failed to declare an exchange: %s", err)
-	}
+	// try to skip ExchangeDeclare and see if it is fine that just receive ExchangeDeclare
+	// ===> found it successfully send the message as soon as the receiver created the queue first
+	// err = ch.ExchangeDeclare(
+	// 	exchange, // name
+	// 	"topic",  // type
+	// 	true,     // durable
+	// 	false,    // auto-deleted
+	// 	false,    // internal
+	// 	false,    // no-wait
+	// 	nil,      // arguments
+	// )
+	// if err != nil {
+	// 	log.Fatalf("Failed to declare an exchange: %s", err)
+	// }
 
 	err = ch.Publish(
 		exchange, // exchange
