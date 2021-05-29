@@ -9,7 +9,9 @@ services:
     build: .
     container_name: rabbitmq-topic
     ports:
+      # AMQP
       - 5672:5672
+      # rabbitMQ management
       - 15672:15672
     environment:
       RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER}
