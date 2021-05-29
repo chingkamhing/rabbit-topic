@@ -57,7 +57,7 @@ func runReceive(cmd *cobra.Command, args []string) {
 	}
 
 	q, err := ch.QueueDeclare(
-		"",    // name
+		queue, // name
 		false, // durable
 		false, // delete when unused
 		true,  // exclusive

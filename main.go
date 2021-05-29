@@ -23,6 +23,7 @@ var vhost string
 var username string
 var password string
 var exchange string
+var queue string
 var route string
 
 func init() {
@@ -33,6 +34,7 @@ func init() {
 	rootCmd.PersistentFlags().StringVar(&username, "username", "", "AMQP username")
 	rootCmd.PersistentFlags().StringVar(&password, "password", "", "AMQP password")
 	rootCmd.PersistentFlags().StringVar(&exchange, "exchange", "", "AMQP exchange name")
+	rootCmd.PersistentFlags().StringVar(&queue, "queue", "", "AMQP queue name")
 	rootCmd.PersistentFlags().StringVar(&route, "route", "", "AMQP routing key")
 }
 
