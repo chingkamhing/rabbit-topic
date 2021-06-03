@@ -1,0 +1,78 @@
+syntax = "proto3";
+package msg;
+option go_package = "example.com/rabbitmq/rabbit-topic/proto-msg;proto_msg";
+
+// user message
+
+message UserBasic {
+    // @inject_tag: db:"UserID"
+    int32 userID = 1;
+    // @inject_tag: db:"GameID"
+    int32 gameID = 2;
+    // @inject_tag: db:"Accounts"
+    string accounts = 3;
+    // @inject_tag: db:"NickName"
+    string nickName = 4;
+    // @inject_tag: db:"FaceID"
+    string faceID = 5;
+    // @inject_tag: db:"Gender"
+    string gender = 6;
+    // @inject_tag: db:"Nullity"
+    bool nullity = 7;
+    // @inject_tag: db:"LastLogonDate"
+    int64 lastLogonDate = 8;
+}
+message UserBalance {
+    // @inject_tag: db:"UserID"
+    int32 userID = 1;
+    // @inject_tag: db:"Score"
+    int64 score = 2;
+    // @inject_tag: db:"Revenue"
+    int64 revenue = 3;
+    // @inject_tag: db:"InsureScore"
+    int64 insureScore = 4;
+    // @inject_tag: db:"AllWinScore"
+    int64 allWinScore = 5;
+    // @inject_tag: db:"BetTotal"
+    int64 betTotal = 6;
+    // @inject_tag: db:"BetCount"
+    int64 betCount = 7;
+    // @inject_tag: db:"EffectiveBetTotal"
+    int64 effectiveBetTotal = 8;
+    // @inject_tag: db:"JackpotScore"
+    int64 jackpotScore = 9;
+    // @inject_tag: db:"TMScore"
+    int64 tmScore = 10;
+    // @inject_tag: db:"JackpotBet"
+    int64 jackpotBet = 11;
+}
+message UserStartGameInfo {
+    // @inject_tag: db:"UserID"
+    int32 userID = 1;
+    // @inject_tag: db:"NickName"
+    string nickName = 2;
+    // @inject_tag: db:"Score"
+    int64 score = 3;
+    // @inject_tag: db:"FaceID"
+    string faceID = 4;
+    // @inject_tag: db:"Gender"
+    string gender = 5;
+    // player's 0-based seat position
+    int32 seatPosition = 6;
+}
+message UserToken {
+    // @inject_tag: db:"UserID"
+    int32 userID = 1;
+    // @inject_tag: db:"DynamicPass"
+    string token = 2;
+}
+
+// MQ message
+message UserMsg {
+	oneof msg {
+        UserBasic userBasic = 1;
+        UserBalance userBalance = 2;
+        UserStartGameInfo userStartGameInfo = 3;
+        UserToken userToken = 4;
+	}
+}

@@ -6,6 +6,9 @@ import (
 
 	"github.com/spf13/cobra"
 	"github.com/streadway/amqp"
+	"google.golang.org/protobuf/proto"
+
+	proto_msg "queue/proto-msg"
 )
 
 // receive cli command settings
@@ -97,8 +100,28 @@ func runReceive(cmd *cobra.Command, args []string) {
 	forever := make(chan bool)
 
 	go func() {
-		for d := range msgs {
-			log.Printf("%s: %s", d.RoutingKey, d.Body)
+		for delivery := range msgs {
+			topic := delivery.RoutingKey
+			log.Printf("topic: %v", topic)
+			msg := delivery.Body
+			data := &proto_msg.UserMsg{}
+			err := proto.Unmarshal(msg, data)
+			if err != nil {
+				log.Printf("Unmarshal MatchMakerWildcowMsg error: %v", err)
+			} else {
+				switch m := data.Msg.(type) {
+				case *proto_msg.UserMsg_UserBasic:
+					log.Printf("UserMsg_UserBasic: %v", m)
+				case *proto_msg.UserMsg_UserBalance:
+					log.Printf("UserMsg_UserBalance: %v", m)
+				case *proto_msg.UserMsg_UserStartGameInfo:
+					log.Printf("UserMsg_UserStartGameInfo: %v", m)
+				case *proto_msg.UserMsg_UserToken:
+					log.Printf("UserMsg_UserToken: %v", m)
+				default:
+					log.Printf("Unknown: %v", m)
+				}
+			}
 		}
 	}()
 

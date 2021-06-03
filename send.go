@@ -6,6 +6,9 @@ import (
 
 	"github.com/spf13/cobra"
 	"github.com/streadway/amqp"
+	"google.golang.org/protobuf/proto"
+
+	proto_msg "queue/proto-msg"
 )
 
 // send cli command settings
@@ -21,7 +24,7 @@ func init() {
 }
 
 func runSend(cmd *cobra.Command, args []string) {
-	body := args[0]
+	name := args[0]
 	var amqpUrl string
 	if username != "" && password != "" {
 		amqpUrl = fmt.Sprintf("%s://%s:%s@%s:%d/", scheme, username, password, host, port)
@@ -43,21 +46,41 @@ func runSend(cmd *cobra.Command, args []string) {
 	}
 	defer ch.Close()
 
-	// try to skip ExchangeDeclare and see if it is fine that just receive ExchangeDeclare
-	// ===> found it successfully send the message as soon as the receiver created the queue first
-	// err = ch.ExchangeDeclare(
-	// 	exchange, // name
-	// 	"topic",  // type
-	// 	true,     // durable
-	// 	false,    // auto-deleted
-	// 	false,    // internal
-	// 	false,    // no-wait
-	// 	nil,      // arguments
-	// )
-	// if err != nil {
-	// 	log.Fatalf("Failed to declare an exchange: %s", err)
-	// }
-
+	msg := &proto_msg.UserMsg{}
+	if len(name) < 10 {
+		msg.Msg = &proto_msg.UserMsg_UserBasic{
+			UserBasic: &proto_msg.UserBasic{
+				UserID:        101,
+				GameID:        101,
+				Accounts:      "Account " + name,
+				NickName:      name,
+				FaceID:        "",
+				Gender:        "",
+				Nullity:       false,
+				LastLogonDate: 0,
+			},
+		}
+	} else {
+		msg.Msg = &proto_msg.UserMsg_UserBalance{
+			UserBalance: &proto_msg.UserBalance{
+				UserID:            1,
+				Score:             2,
+				Revenue:           3,
+				InsureScore:       4,
+				AllWinScore:       5,
+				BetTotal:          6,
+				BetCount:          7,
+				EffectiveBetTotal: 8,
+				JackpotScore:      9,
+				TmScore:           10,
+				JackpotBet:        11,
+			},
+		}
+	}
+	body, err := proto.Marshal(msg)
+	if err != nil {
+		log.Fatalf("JoinSuccess Marshal error: %v", err)
+	}
 	err = ch.Publish(
 		exchange, // exchange
 		route,    // routing key
